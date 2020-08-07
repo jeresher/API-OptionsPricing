@@ -1,9 +1,13 @@
 const express = require('express');
 const Joi = require('joi');
 const app = express();
+const blackScholes = require('./models/blackScholes.js');
 
-app.get("/", (req, res) => {
-    res.send('August 7th, 2020 | Friday 11:13 AM | Jere Sher: I\'m going to be someone one day. ...When I\'m successful show them this so they think it\'s planned');
+app.use(express.json());
+
+app.get("/valuation/blackscholes/:type", (req, res) => {
+    const test = blackScholes(req.body, req.params.type);
+    res.send(test);
 })
 
 app.listen(3000);
