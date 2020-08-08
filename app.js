@@ -4,9 +4,7 @@ const blackScholes = require('./models/blackScholes.js');
 
 app.use(express.json());
 
-app.get("/valuation/blackscholes", (req, res) => {
-    const value = blackScholes(req.body, res);
-    res.send(value);
-})
+app.get("/valuation/blackscholes", blackScholes);
+
 
 app.listen(3000);

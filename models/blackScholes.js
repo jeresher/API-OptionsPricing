@@ -3,21 +3,21 @@ const { pow, log, sqrt, exp } = require('mathjs');
 const { cdf } = require('../tools/helperfunctions');
 
 
-function blackScholesModel(request, res) {
+function blackScholesModel(req, res) {
 
-    const data = validateRequest(request);
+    const data = validateRequest(req.body);
 
     if (data.error) {
         res.status(400).send(data.error.details[0].message);
         return;
     }
 
-    const type = request.optionType
-    const S = request.stockPrice
-    const K = request.strikePrice
-    const r = request.riskFreeInterestRate
-    const t = request.timeToMaturity
-    const v = request.volatility
+    const type = req.body.optionType
+    const S = req.body.stockPrice
+    const K = req.body.strikePrice
+    const r = req.body.riskFreeInterestRate
+    const t = req.body.timeToMaturity
+    const v = req.body.volatility
 
     const d1 = (log(S/K)+(r+(pow(v, 2)/2)*t))/(v*sqrt(t));
     const d2 = d1-(v*sqrt(t));
@@ -25,8 +25,8 @@ function blackScholesModel(request, res) {
     const c = S*cdf(d1)-K*exp(-r*t)*cdf(d2);
     const p = K*exp(-r*t)*cdf(-d2)-S*cdf(-d1);
 
-    if (type === "call") return String(c);
-    if (type === "put") return String(p);
+    if (type === "call") res.send(String(c));
+    if (type === "put") res.send(String(p));
 }
 
 
