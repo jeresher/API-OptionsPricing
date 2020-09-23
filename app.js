@@ -41,8 +41,8 @@ app.listen(PORT, () => {
     RESPONSE
 
     {
-        "ProfitLossPerShare": 1.65,
-        "ProfitLossTotal": 825
+        "profitLossPerShare": 1.65,
+        "profitLossTotal": 825
     }
     
 */
@@ -80,8 +80,8 @@ app.listen(PORT, () => {
                     "contractSize": 100,
                     "positionSize": 5
                 },
-                "ProfitLossPerShare": 1.65,
-                "ProfitLossTotal": 825
+                "profitLossPerShare": 1.65,
+                "profitLossTotal": 825
             },
             {
                 "information": {
@@ -93,8 +93,8 @@ app.listen(PORT, () => {
                     "contractSize": 100,
                     "positionSize": 5
                 },
-                "ProfitLossPerShare": 1.65,
-                "ProfitLossTotal": 825
+                "profitLossPerShare": 1.65,
+                "profitLossTotal": 825
             }
         ],
         "totalProfitLossPerShare": 3.3,

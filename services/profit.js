@@ -35,20 +35,20 @@ function optionPayoff(req, res) {
     const pSize = req.body.positionSize || 1
 
     const c = {
-        ProfitLossPerShare: (direction === "long") ? 
+        profitLossPerShare: (direction === "long") ? 
             max(U-K, 0) - I : 
             (max(U-K, 0) - I) * -1 
         ,
-        ProfitLossTotal: (direction === "long") ? 
+        profitLossTotal: (direction === "long") ? 
             (max(U-K, 0) - I) * cSize * pSize :
             ((max(U-K, 0) - I) * cSize * pSize) * -1
     }
     const p = {
-        ProfitLossPerShare: (direction === "long") ? 
+        profitLossPerShare: (direction === "long") ? 
             max(K-U, 0) - I :
             (max(K-U, 0) - I) * -1
         ,
-        ProfitLossTotal: (direction === "long") ?
+        profitLossTotal: (direction === "long") ?
             (max(K-U, 0) - I) * cSize * pSize :
             ((max(K-U, 0) - I) * cSize * pSize) * -1
     }
@@ -110,32 +110,32 @@ function multiLegPayoff(req, res) {
 
         const c = {
             information,
-            ProfitLossPerShare: (direction === "long") ? 
+            profitLossPerShare: (direction === "long") ? 
                 max(U-K, 0) - I : 
                 (max(U-K, 0) - I) * -1 
             ,
-            ProfitLossTotal: (direction === "long") ? 
+            profitLossTotal: (direction === "long") ? 
                 (max(U-K, 0) - I) * cSize * pSize :
                 ((max(U-K, 0) - I) * cSize * pSize) * -1
         }
         const p = {
             information,
-            ProfitLossPerShare: (direction === "long") ? 
+            profitLossPerShare: (direction === "long") ? 
                 max(K-U, 0) - I :
                 (max(K-U, 0) - I) * -1
             ,
-            ProfitLossTotal: (direction === "long") ?
+            profitLossTotal: (direction === "long") ?
                 (max(K-U, 0) - I) * cSize * pSize :
                 ((max(K-U, 0) - I) * cSize * pSize) * -1
         }
 
         if (type==="call") {
-            totalProfitLossPerShare += c.ProfitLossPerShare
-            totalProfitLoss += c.ProfitLossTotal
+            totalProfitLossPerShare += c.profitLossPerShare
+            totalProfitLoss += c.profitLossTotal
             contracts.push(c)
         } else {
-            totalProfitLossPerShare += p.ProfitLossPerShare
-            totalProfitLoss += p.ProfitLossTotal
+            totalProfitLossPerShare += p.profitLossPerShare
+            totalProfitLoss += p.profitLossTotal
             contracts.push(p)
         }
     })
