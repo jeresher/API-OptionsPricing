@@ -5,6 +5,20 @@ const { cdf } = require('../tools/helperfunctions');
 
 function blackScholesModel(req, res) {
 
+    function validateRequest(request) {
+
+        const schema = Joi.object({
+            optionType: Joi.string().valid("call", "put").required(),
+            stockPrice: Joi.number().required(),
+            strikePrice: Joi.number().required(),
+            riskFreeInterestRate: Joi.number().required(),
+            timeToMaturity: Joi.number().required(),
+            volatility: Joi.number().required()
+        })
+    
+        return schema.validate(request);
+    }
+
     const data = validateRequest(req.body);
 
     if (data.error) {
@@ -29,19 +43,6 @@ function blackScholesModel(req, res) {
     if (type === "put") res.send(String(p));
 }
 
-
-function validateRequest(request) {
-
-    const schema = Joi.object({
-        optionType: Joi.string().valid("call", "put").required(),
-        stockPrice: Joi.number().required(),
-        strikePrice: Joi.number().required(),
-        riskFreeInterestRate: Joi.number().required(),
-        timeToMaturity: Joi.number().required(),
-        volatility: Joi.number().required()
-    })
-
-    return schema.validate(request);
+module.exports = {
+    blackScholesModel
 }
-
-module.exports = blackScholesModel

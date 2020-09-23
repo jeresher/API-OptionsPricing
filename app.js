@@ -1,10 +1,12 @@
 const express = require('express');
 const app = express();
-const blackScholes = require('./models/blackScholes.js');
+const { blackScholesModel } = require('./services/pricing.js');
 
 app.use(express.json());
 
-app.get("/valuation/blackscholes", blackScholes);
+
+// PRICING MODELS
+app.get("/valuation/blackscholes", blackScholesModel);
 
 
 app.listen(3000);
