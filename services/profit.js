@@ -57,6 +57,77 @@ function optionPayoff(req, res) {
     if (type === "put") res.send(p);
 }
 
+function multiLegPayoff(req, res) {
+
+    function validateRequest(request) {
+
+        const individualLegSchema = Joi.object({
+            optionType: Joi.string().valid("call", "put").required(),
+            direction: Joi.string().valid("long", "short"),            // The direction, long or short, of the option (Default: long)
+            initialPrice: Joi.number().required(),                     // Initial price, or premium, of the option
+            strikePrice: Joi.number().required(),                      // Strike price of the option
+            underlyingPrice: Joi.number().required(),                  // Projected price of the option
+            contractSize: Joi.number(),                                // Number of shares a contract represents (Default: 100)
+            positionSize: Joi.number()                                 // Number of contracts being held (Default: 1)
+        })
+
+        const schema = Joi.array().items(individualLegSchema)
+    
+        return schema.validate(request);
+    }
+
+    const data = validateRequest(req.body);
+
+    if (data.error) {
+        res.status(400).send(data.error.details[0].message);
+        return;
+    }
+
+    const options = req.body;
+    var totalProfitLossPerShare = 0;
+    var totalProfitLoss = 0;
+
+    options.forEach(option => {
+        const type = option.optionType
+        const direction = option.direction || "long"
+        const I = option.initialPrice
+        const K = option.strikePrice
+        const U = option.underlyingPrice
+        const cSize = option.contractSize || 100
+        const pSize = option.positionSize || 1
+
+        const c = {
+            ProfitLossPerShare: (direction === "long") ? 
+                max(U-K, 0) - I : 
+                (max(U-K, 0) - I) * -1 
+            ,
+            ProfitLossTotal: (direction === "long") ? 
+                (max(U-K, 0) - I) * cSize * pSize :
+                ((max(U-K, 0) - I) * cSize * pSize) * -1
+        }
+        const p = {
+            ProfitLossPerShare: (direction === "long") ? 
+                max(K-U, 0) - I :
+                (max(K-U, 0) - I) * -1
+            ,
+            ProfitLossTotal: (direction === "long") ?
+                (max(K-U, 0) - I) * cSize * pSize :
+                ((max(K-U, 0) - I) * cSize * pSize) * -1
+        }
+
+        if (type==="call") {
+            totalProfitLossPerShare += c.ProfitLossPerShare
+            totalProfitLoss += c.ProfitLossTotal
+        } else {
+            totalProfitLossPerShare += p.ProfitLossPerShare
+            totalProfitLoss += p.ProfitLossTotal
+        }
+    })
+
+    res.send({totalProfitLossPerShare, totalProfitLoss});
+}
+
 module.exports = {
-    optionPayoff
+    optionPayoff,
+    multiLegPayoff
 }
