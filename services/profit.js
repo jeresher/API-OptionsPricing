@@ -2,7 +2,7 @@ const Joi = require("joi");
 const { max } = require('mathjs');
 
 
-function optionPayoff(req, res) {
+function longOptionPayoff(req, res) {
 
     function validateRequest(request) {
 
@@ -46,7 +46,7 @@ function optionPayoff(req, res) {
     if (type === "put") res.send(p);
 }
 
-function shortPayoff(req, res) {
+function shortOptionPayoff(req, res) {
 
     function validateRequest(request) {
 
@@ -75,5 +75,5 @@ function shortPayoff(req, res) {
 }
 
 module.exports = {
-    optionPayoff
+    longOptionPayoff
 }
