@@ -84,8 +84,10 @@ function multiLegPayoff(req, res) {
     }
 
     const options = req.body;
+
     var totalProfitLossPerShare = 0;
     var totalProfitLoss = 0;
+    var contracts = [];
 
     options.forEach(option => {
         const type = option.optionType
@@ -96,7 +98,18 @@ function multiLegPayoff(req, res) {
         const cSize = option.contractSize || 100
         const pSize = option.positionSize || 1
 
+        const information = {
+            optionType: type,
+            direction: direction,
+            initialPrice: I,
+            strikePrice: K,
+            underlyingPrice: U,
+            contractSize: cSize,
+            positionSize: pSize
+        }
+
         const c = {
+            information,
             ProfitLossPerShare: (direction === "long") ? 
                 max(U-K, 0) - I : 
                 (max(U-K, 0) - I) * -1 
@@ -106,6 +119,7 @@ function multiLegPayoff(req, res) {
                 ((max(U-K, 0) - I) * cSize * pSize) * -1
         }
         const p = {
+            information,
             ProfitLossPerShare: (direction === "long") ? 
                 max(K-U, 0) - I :
                 (max(K-U, 0) - I) * -1
@@ -118,13 +132,15 @@ function multiLegPayoff(req, res) {
         if (type==="call") {
             totalProfitLossPerShare += c.ProfitLossPerShare
             totalProfitLoss += c.ProfitLossTotal
+            contracts.push(c)
         } else {
             totalProfitLossPerShare += p.ProfitLossPerShare
             totalProfitLoss += p.ProfitLossTotal
+            contracts.push(p)
         }
     })
 
-    res.send({totalProfitLossPerShare, totalProfitLoss});
+    res.send({contracts, totalProfitLossPerShare, totalProfitLoss});
 }
 
 module.exports = {

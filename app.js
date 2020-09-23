@@ -67,5 +67,38 @@ app.listen(PORT, () => {
     ]
 
     RESPONSE
+
+    {
+        "contracts": [
+            {
+                "information": {
+                    "optionType": "call",
+                    "direction": "long",
+                    "initialPrice": 2.35,
+                    "strikePrice": 45,
+                    "underlyingPrice": 49,
+                    "contractSize": 100,
+                    "positionSize": 5
+                },
+                "ProfitLossPerShare": 1.65,
+                "ProfitLossTotal": 825
+            },
+            {
+                "information": {
+                    "optionType": "call",
+                    "direction": "long",
+                    "initialPrice": 2.35,
+                    "strikePrice": 45,
+                    "underlyingPrice": 49,
+                    "contractSize": 100,
+                    "positionSize": 5
+                },
+                "ProfitLossPerShare": 1.65,
+                "ProfitLossTotal": 825
+            }
+        ],
+        "totalProfitLossPerShare": 3.3,
+        "totalProfitLoss": 1650
+    }
     
 */
