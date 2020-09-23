@@ -37,6 +37,13 @@ app.listen(PORT, () => {
         "contractSize": 100,
         "positionSize": 5
     }
+
+    RESPONSE
+
+    {
+        "ProfitLossPerShare": 1.65,
+        "ProfitLossTotal": 825
+    }
     
 */
 
@@ -58,5 +65,7 @@ app.listen(PORT, () => {
             ...
         }
     ]
+
+    RESPONSE
     
 */
