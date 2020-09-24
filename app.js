@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const { blackScholesModel } = require('./services/valuation.js');
+const { blackScholesModel, coxRossRubinsteinModel } = require('./services/valuation.js');
 const { optionPayoff, multiLegPayoff } = require('./services/profit');
 
 const PORT = 3000
@@ -9,6 +9,7 @@ app.use(express.json());
 
 // PRICING MODELS
 app.get("/valuation/blackscholes", blackScholesModel);
+app.get("/valuation/crr-model", coxRossRubinsteinModel);
 
 // PROFIT CALCULATIONS
 app.get("/profit/option-payoff", optionPayoff);                       // OPTION PAYOFF: Calculate the profit & loss of a long or short position in a call or put option.
