@@ -45,6 +45,26 @@ function blackScholesModel(req, res) {
 
 function getUnderlyingPriceTree({optionType, amEuro, undPrice, vol, strike, timeDays, intRate, yield, steps, upMove, downMove, upProb, downProb}) {
 
+    var tree = [[undPrice]];
+
+    for (let i=1; i <= steps; i++) {
+        var step = [];
+        var previousStep = tree[i-1];
+
+        step.push(previousStep[0] * upMove);
+
+        for (let i=0; i < previousStep.length; i++) {
+            step.push(previousStep[i] * downMove)
+        }
+
+        tree.push(step);
+    }
+
+    return tree;
+}
+
+function getOptionPriceTree({optionType, underlyingPriceTree}) {
+
 }
 
 function coxRossRubinsteinModel(req, res) {
@@ -81,8 +101,14 @@ function coxRossRubinsteinModel(req, res) {
 
     const underlyingPriceTree = getUnderlyingPriceTree({optionType, amEuro, undPrice, vol, strike, timeDays, intRate, yield, steps, upMove, downMove, upProb, downProb})
 
-    res.send(underlyingPriceTree)
+    const optionPriceTree = getOptionPriceTree({optionType, underlyingPriceTree});
 
+    for (let i=underlyingPriceTree.length - 1; i > 0; i--) {
+        const step = underlyingPriceTree[i];
+
+    }
+
+    res.send(underlyingPriceTree)
 }
 
 module.exports = {
