@@ -1,5 +1,5 @@
 const Joi = require('joi');
-const { pow, log, sqrt, exp } = require('mathjs');
+const { pow, log, sqrt, exp, max, trueDependencies } = require('mathjs');
 const { cdf } = require('../tools/helperfunctions');
 
 
@@ -63,8 +63,48 @@ function getUnderlyingPriceTree({optionType, amEuro, undPrice, vol, strike, time
     return tree;
 }
 
-function getOptionPriceTree({optionType, underlyingPriceTree}) {
+function getOptionPriceTree(underlyingPriceTree, {optionType, amEuro, undPrice, vol, strike, timeDays, intRate, yield, steps, upMove, downMove, upProb, downProb}) {
 
+    const stepDiscount = getStepDiscount({timeDays, steps, intRate});
+    
+    var tree = [];
+    
+    // Last step in Option Price Tree
+    if (optionType === "call") {
+        const lastStep = underlyingPriceTree[underlyingPriceTree.length-1];
+        var nodes = [];
+
+        for (let i=0; i < lastStep.length; i++) {
+            const price = lastStep[i];
+            nodes.push(max(0, price-strike));
+        }
+
+        tree.push(nodes);
+    }
+
+    // Remaining steps in Option Price Tree
+    for (let i=underlyingPriceTree.length - 2; i > 0; i--) {
+        const step = underlyingPriceTree[i];
+        var nodes = [];
+
+        for (let i=0; i < step.length-1; i++) {
+            const upPrice = step[i]
+            const downPrice = step[i+1]
+
+
+        }
+    }
+
+    return tree;
+
+}
+
+function getStepDiscount({timeDays, steps, intRate}) {
+    const timePct = timeDays/365;
+    const stepPct = timePct/steps;
+    const stepDiscount = exp((-intRate)*stepPct);
+
+    return stepDiscount;
 }
 
 function coxRossRubinsteinModel(req, res) {
@@ -101,14 +141,9 @@ function coxRossRubinsteinModel(req, res) {
 
     const underlyingPriceTree = getUnderlyingPriceTree({optionType, amEuro, undPrice, vol, strike, timeDays, intRate, yield, steps, upMove, downMove, upProb, downProb})
 
-    const optionPriceTree = getOptionPriceTree({optionType, underlyingPriceTree});
+    const optionPriceTree = getOptionPriceTree(underlyingPriceTree, {optionType, amEuro, undPrice, vol, strike, timeDays, intRate, yield, steps, upMove, downMove, upProb, downProb});
 
-    for (let i=underlyingPriceTree.length - 1; i > 0; i--) {
-        const step = underlyingPriceTree[i];
-
-    }
-
-    res.send(underlyingPriceTree)
+    res.send(optionPriceTree)
 }
 
 module.exports = {
