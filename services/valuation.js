@@ -121,11 +121,7 @@ function coxRossRubinsteinModel(req, res) {
             timeDays: Joi.number().required(),                                // Time to expiration as number of days
             intRate: Joi.number().required(),                                 // The risk-free interest rate
             yield: Joi.number().required(),                                   // Continuous dividend yield (stocks) or foreign rate (currency)
-            steps: Joi.number().required(),                                   // Number of steps in the binomial tree
-            //upMove: Joi.number().required(),                                  // The size of the up move in the binomial tree
-            //downMove: Joi.number().required(),                                // The size of the down move in the binomial tree
-            //upProb: Joi.number().required(),                                  // The probability of the up move in the binomial tree
-            //downProb: Joi.number().required()                                 // The probability of the down move in the binomial tree
+            steps: Joi.number().required()                                    // Number of steps in the binomial tree
         })
     
         return schema.validate(request);
@@ -144,10 +140,10 @@ function coxRossRubinsteinModel(req, res) {
     const stepPct = timePct/steps;
     const stepDiscount = exp((-intRate)*stepPct);
 
-    const upMove = exp(vol*sqrt(stepPct));
-    const downMove = 1/upMove;
-    const upProb = (exp((intRate-yield)*stepPct)-downMove)/(upMove-downMove);
-    const downProb = 1-upProb;
+    const upMove = exp(vol*sqrt(stepPct));                                     // The size of the up move in the binomial tree
+    const downMove = 1/upMove;                                                 // The size of the down move in the binomial tree
+    const upProb = (exp((intRate-yield)*stepPct)-downMove)/(upMove-downMove);  // The probability of the up move in the binomial tree
+    const downProb = 1-upProb;                                                 // The probability of the down move in the binomial tree
 
     const underlyingPriceTree = getUnderlyingPriceTree({optionType, isEuro, undPrice, vol, strike, timeDays, intRate, yield, steps, upMove, downMove, upProb, downProb})
 
@@ -162,7 +158,51 @@ function coxRossRubinsteinModel(req, res) {
 }
 
 function jarrowRuddModel(req, res) {
-    res.send('hey');
+    function validateRequest(request) {
+
+        const schema = Joi.object({
+            optionType: Joi.string().valid("call", "put").required(),                
+            isEuro: Joi.boolean().required(),                                 // Whether the option is American or European
+            undPrice: Joi.number().required(),                                // The underlying price of the option
+            vol: Joi.number().required(),                                     // Volatilty
+            strike: Joi.number().required(),                                  // The option's strike price
+            timeDays: Joi.number().required(),                                // Time to expiration as number of days
+            intRate: Joi.number().required(),                                 // The risk-free interest rate
+            yield: Joi.number().required(),                                   // Continuous dividend yield (stocks) or foreign rate (currency)
+            steps: Joi.number().required()                                    // Number of steps in the binomial tree
+        })
+    
+        return schema.validate(request);
+    }
+
+    const data = validateRequest(req.body);
+
+    if (data.error) {
+        res.status(400).send(data.error.details[0].message);
+        return;
+    }
+
+    const {optionType, isEuro, undPrice, vol, strike, timeDays, intRate, yield, steps} = req.body
+    
+    const timePct = timeDays/365;
+    const stepPct = timePct/steps;
+    const stepDiscount = exp((-intRate)*stepPct);
+
+    const upMove = exp((intRate-yield-pow(vol, 2)/2)*stepPct+vol*sqrt(stepPct));
+    const downMove = exp((intRate-yield-pow(vol, 2)/2)*stepPct-vol*sqrt(stepPct));
+    const upProb = 0.5;
+    const downProb = 0.5;
+
+    const underlyingPriceTree = getUnderlyingPriceTree({optionType, isEuro, undPrice, vol, strike, timeDays, intRate, yield, steps, upMove, downMove, upProb, downProb})
+
+    const optionPriceTree = getOptionPriceTree(underlyingPriceTree, {stepDiscount, optionType, isEuro, undPrice, vol, strike, timeDays, intRate, yield, steps, upMove, downMove, upProb, downProb});
+
+    res.send({
+        information: req.body, 
+        underlyingPriceTree,
+        optionPriceTree,
+        optionPrice: optionPriceTree[0][0]
+    })
 }
 
 module.exports = {
