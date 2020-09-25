@@ -122,10 +122,10 @@ function coxRossRubinsteinModel(req, res) {
             intRate: Joi.number().required(),                                 // The risk-free interest rate
             yield: Joi.number().required(),                                   // Continuous dividend yield (stocks) or foreign rate (currency)
             steps: Joi.number().required(),                                   // Number of steps in the binomial tree
-            upMove: Joi.number().required(),                                  // The size of the up move in the binomial tree
-            downMove: Joi.number().required(),                                // The size of the down move in the binomial tree
-            upProb: Joi.number().required(),                                  // The probability of the up move in the binomial tree
-            downProb: Joi.number().required()                                 // The probability of the down move in the binomial tree
+            //upMove: Joi.number().required(),                                  // The size of the up move in the binomial tree
+            //downMove: Joi.number().required(),                                // The size of the down move in the binomial tree
+            //upProb: Joi.number().required(),                                  // The probability of the up move in the binomial tree
+            //downProb: Joi.number().required()                                 // The probability of the down move in the binomial tree
         })
     
         return schema.validate(request);
@@ -153,7 +153,12 @@ function coxRossRubinsteinModel(req, res) {
 
     const optionPriceTree = getOptionPriceTree(underlyingPriceTree, {stepDiscount, optionType, isEuro, undPrice, vol, strike, timeDays, intRate, yield, steps, upMove, downMove, upProb, downProb});
 
-    res.send(optionPriceTree)
+    res.send({
+        information: req.body, 
+        underlyingPriceTree,
+        optionPriceTree,
+        optionPrice: optionPriceTree[0][0]
+    })
 }
 
 module.exports = {
