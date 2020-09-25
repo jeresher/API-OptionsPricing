@@ -1,5 +1,5 @@
 const Joi = require('joi');
-const { pow, log, sqrt, exp, max, trueDependencies } = require('mathjs');
+const { pow, log, sqrt, exp, max } = require('mathjs');
 const { cdf } = require('../tools/helperfunctions');
 
 
@@ -43,7 +43,7 @@ function blackScholesModel(req, res) {
     if (type === "put") res.send(String(p));
 }
 
-function getUnderlyingPriceTree({optionType, amEuro, undPrice, vol, strike, timeDays, intRate, yield, steps, upMove, downMove, upProb, downProb}) {
+function getUnderlyingPriceTree({optionType, isEuro, undPrice, vol, strike, timeDays, intRate, yield, steps, upMove, downMove, upProb, downProb}) {
 
     var tree = [[undPrice]];
 
@@ -63,9 +63,7 @@ function getUnderlyingPriceTree({optionType, amEuro, undPrice, vol, strike, time
     return tree;
 }
 
-function getOptionPriceTree(underlyingPriceTree, {optionType, amEuro, undPrice, vol, strike, timeDays, intRate, yield, steps, upMove, downMove, upProb, downProb}) {
-
-    const stepDiscount = getStepDiscount({timeDays, steps, intRate});
+function getOptionPriceTree(underlyingPriceTree, {stepDiscount, optionType, isEuro, undPrice, vol, strike, timeDays, intRate, yield, steps, upMove, downMove, upProb, downProb}) {
     
     var tree = [];
     
@@ -99,7 +97,7 @@ function getOptionPriceTree(underlyingPriceTree, {optionType, amEuro, undPrice, 
                 if (optionType === "put") return strike - undPrice;
             }
 
-            const price = amEuro ? expectedValue : max(expectedValue, intrinsicValue())
+            const price = isEuro ? expectedValue : max(expectedValue, intrinsicValue())
             
             nodes.push(price);
         }
@@ -110,21 +108,13 @@ function getOptionPriceTree(underlyingPriceTree, {optionType, amEuro, undPrice, 
     return tree.reverse();
 }
 
-function getStepDiscount({timeDays, steps, intRate}) {
-    const timePct = timeDays/365;
-    const stepPct = timePct/steps;
-    const stepDiscount = exp((-intRate)*stepPct);
-
-    return stepDiscount;
-}
-
 function coxRossRubinsteinModel(req, res) {
 
     function validateRequest(request) {
 
         const schema = Joi.object({
             optionType: Joi.string().valid("call", "put").required(),                
-            amEuro: Joi.boolean().required(),                                 // Whether the option is American or European
+            isEuro: Joi.boolean().required(),                                 // Whether the option is American or European
             undPrice: Joi.number().required(),                                // The underlying price of the option
             vol: Joi.number().required(),                                     // Volatilty
             strike: Joi.number().required(),                                  // The option's strike price
@@ -148,11 +138,20 @@ function coxRossRubinsteinModel(req, res) {
         return;
     }
 
-    const {optionType, amEuro, undPrice, vol, strike, timeDays, intRate, yield, steps, upMove, downMove, upProb, downProb} = req.body
+    const {optionType, isEuro, undPrice, vol, strike, timeDays, intRate, yield, steps} = req.body
+    
+    const timePct = timeDays/365;
+    const stepPct = timePct/steps;
+    const stepDiscount = exp((-intRate)*stepPct);
 
-    const underlyingPriceTree = getUnderlyingPriceTree({optionType, amEuro, undPrice, vol, strike, timeDays, intRate, yield, steps, upMove, downMove, upProb, downProb})
+    const upMove = exp(vol*sqrt(stepPct));
+    const downMove = 1/upMove;
+    const upProb = (exp((intRate-yield)*stepPct)-downMove)/(upMove-downMove);
+    const downProb = 1-upProb;
 
-    const optionPriceTree = getOptionPriceTree(underlyingPriceTree, {optionType, amEuro, undPrice, vol, strike, timeDays, intRate, yield, steps, upMove, downMove, upProb, downProb});
+    const underlyingPriceTree = getUnderlyingPriceTree({optionType, isEuro, undPrice, vol, strike, timeDays, intRate, yield, steps, upMove, downMove, upProb, downProb})
+
+    const optionPriceTree = getOptionPriceTree(underlyingPriceTree, {stepDiscount, optionType, isEuro, undPrice, vol, strike, timeDays, intRate, yield, steps, upMove, downMove, upProb, downProb});
 
     res.send(optionPriceTree)
 }
