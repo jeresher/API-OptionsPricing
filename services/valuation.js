@@ -161,7 +161,12 @@ function coxRossRubinsteinModel(req, res) {
     })
 }
 
+function jarrowRuddModel(req, res) {
+    res.send('hey');
+}
+
 module.exports = {
     blackScholesModel,
-    coxRossRubinsteinModel
+    coxRossRubinsteinModel,
+    jarrowRuddModel
 }
