@@ -13,7 +13,7 @@ const PORT = 3000
 app.use(express.json());
 
 // PRICING MODELS
-app.get("/valuation/blackscholes", blackScholesModel);
+app.get("/valuation/black-scholes-model", blackScholesModel);
 app.get("/valuation/crr-model", coxRossRubinsteinModel);
 app.get("/valuation/jarrow-rudd-model", jarrowRuddModel);
 app.get("/valuation/leisen-reimer-model", leisenReimerModel);

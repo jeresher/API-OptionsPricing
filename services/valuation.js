@@ -39,8 +39,8 @@ function blackScholesModel(req, res) {
     const c = S*cdf(d1)-K*exp(-r*t)*cdf(d2);
     const p = K*exp(-r*t)*cdf(-d2)-S*cdf(-d1);
 
-    if (type === "call") res.send(String(c));
-    if (type === "put") res.send(String(p));
+    if (type === "call") res.send({information: req.body, optionPrice: String(c)});
+    if (type === "put") res.send({information: req.body, optionPrice: String(p)});
 }
 
 function coxRossRubinsteinModel(req, res) {
