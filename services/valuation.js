@@ -70,33 +70,35 @@ function getOptionPriceTree(underlyingPriceTree, {optionType, amEuro, undPrice, 
     var tree = [];
     
     // Last step in Option Price Tree
-    if (optionType === "call") {
-        const lastStep = underlyingPriceTree[underlyingPriceTree.length-1];
+    const lastStep = underlyingPriceTree[underlyingPriceTree.length-1];
+    var nodes = [];
+
+    for (let i=0; i < lastStep.length; i++) {
+        const price = lastStep[i];
+        
+        if (optionType === "call") nodes.push(max(0, price-strike));
+        if (optionType === "put") nodes.push(max(0, strike-price));
+    }
+
+    tree.push(nodes);
+
+    // Remaining steps in Option Price Tree
+    for (let i=0; i < underlyingPriceTree.length - 1; i++) {
+        const step = tree[i];
         var nodes = [];
 
-        for (let i=0; i < lastStep.length; i++) {
-            const price = lastStep[i];
-            nodes.push(max(0, price-strike));
+        for (let i=0; i < step.length-1; i++) {
+            const upPrice = step[i];
+            const downPrice = step[i+1];
+
+            const price = (upPrice * upProb + downPrice * downProb) * stepDiscount;
+            nodes.push(price);
         }
 
         tree.push(nodes);
     }
 
-    // Remaining steps in Option Price Tree
-    for (let i=underlyingPriceTree.length - 2; i > 0; i--) {
-        const step = underlyingPriceTree[i];
-        var nodes = [];
-
-        for (let i=0; i < step.length-1; i++) {
-            const upPrice = step[i]
-            const downPrice = step[i+1]
-
-
-        }
-    }
-
-    return tree;
-
+    return tree.reverse();
 }
 
 function getStepDiscount({timeDays, steps, intRate}) {
