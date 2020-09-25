@@ -85,13 +85,22 @@ function getOptionPriceTree(underlyingPriceTree, {optionType, amEuro, undPrice, 
     // Remaining steps in Option Price Tree
     for (let i=0; i < underlyingPriceTree.length - 1; i++) {
         const step = tree[i];
+        const undTreeStep = underlyingPriceTree[underlyingPriceTree.length-2-i]
         var nodes = [];
 
         for (let i=0; i < step.length-1; i++) {
             const upPrice = step[i];
             const downPrice = step[i+1];
+            const undPrice = undTreeStep[i];
 
-            const price = (upPrice * upProb + downPrice * downProb) * stepDiscount;
+            const expectedValue = (upPrice * upProb + downPrice * downProb) * stepDiscount;
+            const intrinsicValue = () => {
+                if (optionType === "call") return undPrice - strike;
+                if (optionType === "put") return strike - undPrice;
+            }
+
+            const price = amEuro ? expectedValue : max(expectedValue, intrinsicValue())
+            
             nodes.push(price);
         }
 
