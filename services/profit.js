@@ -11,7 +11,7 @@ function optionPayoff(req, res) {
             direction: Joi.string().valid("long", "short"),            // The direction, long or short, of the option (Default: long)
             initialPrice: Joi.number().required(),                     // Initial price, or premium, of the option
             strikePrice: Joi.number().required(),                      // Strike price of the option
-            underlyingPrice: Joi.number().required(),                  // Projected price of the option
+            underlyingPrice: Joi.number().required(),                  // Market price of the option
             contractSize: Joi.number(),                                // Number of shares a contract represents (Default: 100)
             positionSize: Joi.number()                                 // Number of contracts being held (Default: 1)
         })
@@ -66,7 +66,7 @@ function multiLegPayoff(req, res) {
             direction: Joi.string().valid("long", "short"),            // The direction, long or short, of the option (Default: long)
             initialPrice: Joi.number().required(),                     // Initial price, or premium, of the option
             strikePrice: Joi.number().required(),                      // Strike price of the option
-            underlyingPrice: Joi.number().required(),                  // Projected price of the option
+            underlyingPrice: Joi.number().required(),                  // Market price of the option
             contractSize: Joi.number(),                                // Number of shares a contract represents (Default: 100)
             positionSize: Joi.number()                                 // Number of contracts being held (Default: 1)
         })
