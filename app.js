@@ -7,7 +7,11 @@ const {
     leisenReimerModel 
 } = require('./services/valuation.js');
 const { optionPayoff, multiLegPayoff } = require('./services/profit');
-const { longCall, longPut } = require('./services/strategies');
+const { longCall, 
+    longPut,
+    nakedCall,
+    nakedPut
+} = require('./services/strategies');
 
 
 const PORT = 3000
@@ -27,7 +31,8 @@ app.get("/profit/multi-leg-payoff", multiLegPayoff);                  // MULTI-L
 // OPTION STRATEGIES Straddles, Spreads, Condors, Butterflies
 app.get("/strategy/long-call", longCall);
 app.get("/strategy/long-put", longPut);
-app.get("/strategy/naked-call") // (standalone short call)
+app.get("/strategy/naked-call", nakedCall) // (standalone short call)
+app.get("/strategy/naked-put", nakedPut)
 
 
 app.listen(PORT, () => {
