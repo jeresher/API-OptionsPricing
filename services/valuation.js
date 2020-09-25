@@ -246,11 +246,10 @@ function leisenReimerModel(req, res) {
     const d1inversion = 0.5+sign(d1)/2*sqrt(1-exp(-(pow((d1/(steps+1/3+0.1/(steps+1))), 2)*(steps+1/6))));
     const d2inversion = 0.5+sign(d2)/2*sqrt(1-exp(-(pow((d2/(steps+1/3+0.1/(steps+1))), 2)*(steps+1/6))));
 
-
-    const upMove = exp((intRate-yield-pow(vol, 2)/2)*stepPct+vol*sqrt(stepPct));
-    const downMove = exp((intRate-yield-pow(vol, 2)/2)*stepPct-vol*sqrt(stepPct));
-    const upProb = 0.5;
-    const downProb = 0.5;
+    const upMove = exp((intRate-yield)*stepPct)*(d1inversion/d2inversion)
+    const downMove = exp((intRate-yield)*stepPct)*((1-d1inversion)/(1-d2inversion))
+    const upProb = d2inversion;
+    const downProb = 1-d2inversion;
 
     const underlyingPriceTree = getUnderlyingPriceTree({optionType, isEuro, undPrice, vol, strike, timeDays, intRate, yield, steps, upMove, downMove, upProb, downProb})
 
