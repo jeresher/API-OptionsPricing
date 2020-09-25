@@ -43,7 +43,7 @@ function blackScholesModel(req, res) {
     if (type === "put") res.send(String(p));
 }
 
-function getUnderlyingPriceTree({optionType, isEuro, undPrice, vol, strike, timeDays, intRate, yield, steps, upMove, downMove, upProb, downProb}) {
+function getUnderlyingPriceTree({undPrice, steps, upMove, downMove}) {
 
     var tree = [[undPrice]];
 
@@ -63,7 +63,7 @@ function getUnderlyingPriceTree({optionType, isEuro, undPrice, vol, strike, time
     return tree;
 }
 
-function getOptionPriceTree(underlyingPriceTree, {stepDiscount, optionType, isEuro, undPrice, vol, strike, timeDays, intRate, yield, steps, upMove, downMove, upProb, downProb}) {
+function getOptionPriceTree(underlyingPriceTree, {stepDiscount, optionType, isEuro, strike, upProb, downProb}) {
     
     var tree = [];
     
@@ -145,9 +145,9 @@ function coxRossRubinsteinModel(req, res) {
     const upProb = (exp((intRate-yield)*stepPct)-downMove)/(upMove-downMove);  // The probability of the up move in the binomial tree
     const downProb = 1-upProb;                                                 // The probability of the down move in the binomial tree
 
-    const underlyingPriceTree = getUnderlyingPriceTree({optionType, isEuro, undPrice, vol, strike, timeDays, intRate, yield, steps, upMove, downMove, upProb, downProb})
+    const underlyingPriceTree = getUnderlyingPriceTree({undPrice, steps, upMove, downMove})
 
-    const optionPriceTree = getOptionPriceTree(underlyingPriceTree, {stepDiscount, optionType, isEuro, undPrice, vol, strike, timeDays, intRate, yield, steps, upMove, downMove, upProb, downProb});
+    const optionPriceTree = getOptionPriceTree(underlyingPriceTree, {stepDiscount, optionType, isEuro, strike, upProb, downProb});
 
     res.send({
         information: req.body, 
@@ -193,9 +193,9 @@ function jarrowRuddModel(req, res) {
     const upProb = 0.5;
     const downProb = 0.5;
 
-    const underlyingPriceTree = getUnderlyingPriceTree({optionType, isEuro, undPrice, vol, strike, timeDays, intRate, yield, steps, upMove, downMove, upProb, downProb})
+    const underlyingPriceTree = getUnderlyingPriceTree({undPrice, steps, upMove, downMove});
 
-    const optionPriceTree = getOptionPriceTree(underlyingPriceTree, {stepDiscount, optionType, isEuro, undPrice, vol, strike, timeDays, intRate, yield, steps, upMove, downMove, upProb, downProb});
+    const optionPriceTree = getOptionPriceTree(underlyingPriceTree, {stepDiscount, optionType, isEuro, strike, upProb, downProb});
 
     res.send({
         information: req.body, 
@@ -251,9 +251,9 @@ function leisenReimerModel(req, res) {
     const upProb = d2inversion;
     const downProb = 1-d2inversion;
 
-    const underlyingPriceTree = getUnderlyingPriceTree({optionType, isEuro, undPrice, vol, strike, timeDays, intRate, yield, steps, upMove, downMove, upProb, downProb})
+    const underlyingPriceTree = getUnderlyingPriceTree({undPrice, steps, upMove, downMove})
 
-    const optionPriceTree = getOptionPriceTree(underlyingPriceTree, {stepDiscount, optionType, isEuro, undPrice, vol, strike, timeDays, intRate, yield, steps, upMove, downMove, upProb, downProb});
+    const optionPriceTree = getOptionPriceTree(underlyingPriceTree, {stepDiscount, optionType, isEuro, strike, upProb, downProb});
 
     res.send({
         information: req.body, 
