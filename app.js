@@ -1,6 +1,11 @@
 const express = require('express');
 const app = express();
-const { blackScholesModel, coxRossRubinsteinModel, jarrowRuddModel } = require('./services/valuation.js');
+const { 
+    blackScholesModel, 
+    coxRossRubinsteinModel, 
+    jarrowRuddModel,
+    leisenReimerModel 
+} = require('./services/valuation.js');
 const { optionPayoff, multiLegPayoff } = require('./services/profit');
 
 const PORT = 3000
@@ -11,6 +16,7 @@ app.use(express.json());
 app.get("/valuation/blackscholes", blackScholesModel);
 app.get("/valuation/crr-model", coxRossRubinsteinModel);
 app.get("/valuation/jarrow-rudd-model", jarrowRuddModel);
+app.get("/valuation/leisen-reimer-model", leisenReimerModel);
 
 // PROFIT CALCULATIONS
 app.get("/profit/option-payoff", optionPayoff);                       // OPTION PAYOFF: Calculate the profit & loss of a long or short position in a call or put option.
@@ -107,7 +113,7 @@ app.listen(PORT, () => {
 
 /*
     
-    CRR MODEL BODY FORMAT
+    CRR MODEL / JARROW RUDD BODY FORMAT
     
     {
         "optionType": "call",
