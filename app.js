@@ -28,11 +28,12 @@ app.get("/valuation/leisen-reimer-model", leisenReimerModel);
 app.get("/profit/option-payoff", optionPayoff);                       // OPTION PAYOFF: Calculate the profit & loss of a long or short position in a call or put option.
 app.get("/profit/multi-leg-payoff", multiLegPayoff);                  // MULTI-LEG PAYOFF: Calculate the total profit & loss of a multi-leg strategy.
 
-// OPTION STRATEGIES Straddles, Spreads, Condors, Butterflies
+// BASIC OPTION STRATEGIES
 app.get("/strategy/long-call", longCall);
 app.get("/strategy/long-put", longPut);
-app.get("/strategy/naked-call", nakedCall) // (standalone short call)
-app.get("/strategy/naked-put", nakedPut)
+app.get("/strategy/covered-call", coveredCall);
+app.get("/strategy/naked-call", nakedCall);
+app.get("/strategy/naked-put", nakedPut);
 
 
 app.listen(PORT, () => {
