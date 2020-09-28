@@ -1,5 +1,5 @@
 const Joi = require("joi");
-const { max } = require("mathjs");
+const { max, min } = require("mathjs");
 
 
 function longCall(req, res) {
@@ -69,6 +69,40 @@ function longPut(req, res) {
         information: req.body,
         profitLossPerShare: max(K-U, 0) - I,
         profitLossTotal: (max(K-U, 0) - I) * cSize * pSize
+    })
+}
+
+function coveredCall(req, res) {
+
+    function validateRequest(request) {
+        
+        const schema = Joi.object({
+            stockPurchasePrice: Joi.number().required(),               // Initial price of the stock
+            stockExpirationPrice: Joi.number().required(),             // Stock price at expiration
+            optionPremium: Joi.number().required(),                    // Initial price, or premium, of the option
+            strikePrice: Joi.number().required(),                      // Strike price of the option
+            contractSize: Joi.number(),                                // Number of shares a contract represents (Default: 100)
+            positionSize: Joi.number()                                 // Number of contracts being held (Default: 1)
+        })
+
+        return schema.validate(request);
+    }
+
+    const data = validateRequest(req.body);
+
+    if (data.error) {
+        res.status(400).send(data.error.details[0].message);
+        return;
+    }
+
+    const { stockPurchasePrice, stockExpirationPrice, optionPremium, strikePrice, contractSize, positionSize} = req.body;
+
+    res.send({
+        information: req.body,
+        breakEvenPoint: stockPurchasePrice - optionPremium,
+        maxProfitPoint: strikePrice,
+        profitLossPerShare: min(strikePrice - stockPurchasePrice, stockExpirationPrice - stockPurchasePrice) + optionPremium,
+        profitLossTotal: (min(strikePrice - stockPurchasePrice, stockExpirationPrice - stockPurchasePrice) + optionPremium) * contractSize * positionSize
     })
 }
 
@@ -145,6 +179,7 @@ function nakedPut(req, res) {
 module.exports = {
     longCall,
     longPut,
+    coveredCall,
     nakedCall,
     nakedPut
 }

@@ -7,8 +7,10 @@ const {
     leisenReimerModel 
 } = require('./services/valuation.js');
 const { optionPayoff, multiLegPayoff } = require('./services/profit');
-const { longCall, 
+const { 
+    longCall, 
     longPut,
+    coveredCall,
     nakedCall,
     nakedPut
 } = require('./services/strategies');
