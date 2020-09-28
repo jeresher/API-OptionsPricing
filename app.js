@@ -4,7 +4,7 @@ const { blackScholesModel, coxRossRubinsteinModel, jarrowRuddModel, leisenReimer
 const { optionPayoff, multiLegPayoff } = require('./services/profit');
 const { longCall, longPut, coveredCall, nakedCall, nakedPut } = require('./services/strategies');
 const { bearPutSpread, bullCallSpread, bullPutSpread, bearCallSpread } = require('./services/spreads');
-const { longStraddle, longStrangle, shortStraddle, shortStrangle } = require('./services/advanced');
+const { longStraddle, longStrangle, shortStraddle, shortStrangle, ironCondor } = require('./services/advanced');
 
 
 const PORT = 3000
@@ -39,6 +39,7 @@ app.get("/advanced/long-straddle", longStraddle);
 app.get("/advanced/long-strangle", longStrangle);
 app.get("/advanced/short-straddle", shortStraddle);
 app.get("/advanced/short-strangle", shortStrangle);
+app.get("/advanced/iron-condor", ironCondor);
 
 app.listen(PORT, () => {
     console.log(`Listening on PORT: ${PORT}`)
