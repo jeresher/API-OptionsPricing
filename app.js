@@ -479,6 +479,42 @@ app.listen(PORT, () => {
 
     SHORT STRADDLE BODY FORMAT
 
-    
+    {
+        "shortPutStrikePrice": 45,
+        "shortPutPremiumPrice": 2.85,
+        "shortCallStrikePrice": 45,
+        "shortCallPremiumPrice": 2.88,
+        "underlyingPrice": 48.5,
+        "contractSize": 100, 
+        "positionSizeEachOptionType": 1
+    }
+
+    RESPONSE
+
+    {
+        "putLeg": {
+            "direction": "short",
+            "type": "put",
+            "strike": 45,
+            "size": 1,
+            "initialPrice": 2.85,
+            "initialCF": 285,
+            "value": 0,
+            "profitLoss": 285
+        },
+        "callLeg": {
+            "direction": "short",
+            "type": "call",
+            "strike": 45,
+            "size": 1,
+            "initialPrice": 2.88,
+            "initialCF": 288,
+            "value": -350,
+            "profitLoss": -62
+        },
+        "initialCF": 573,
+        "value": -350,
+        "profitLoss": 223
+    }
 
 */
