@@ -15,7 +15,8 @@ const {
     nakedPut
 } = require('./services/strategies');
 const {
-    bearPutSpread
+    bearPutSpread,
+    bullCallSpread
 } = require('./services/spreads');
 
 
@@ -42,6 +43,7 @@ app.get("/strategy/naked-put", nakedPut);
 
 // SPREAD OPTION STRATEGIES
 app.get("/spread/bear-put-spread", bearPutSpread);
+app.get("/spread/bull-call-spread", bullCallSpread);
 
 app.listen(PORT, () => {
     console.log(`Listening on PORT: ${PORT}`)
@@ -345,4 +347,48 @@ app.listen(PORT, () => {
         "value": 500,
         "profitLoss": 238
     }
+*/
+
+/* 
+
+    BULL CALL SPREAD FORMAT 
+
+    {
+        "longCallStrikePrice": 45,
+        "longCallPremiumPrice": 4.38,
+        "shortCallStrikePrice": 50,
+        "shortCallPremiumPrice": 2.02,
+        "underlyingPrice": 52,
+        "contractSize": 100, 
+        "positionSizeEachDirection": 1
+    }
+
+    RESPONSE
+
+    {
+        "longLeg": {
+            "direction": "long",
+            "type": "call",
+            "strike": 45,
+            "size": 1,
+            "initialPrice": 4.38,
+            "initialCF": -438,
+            "value": 700,
+            "profitLoss": 262
+        },
+        "shortLeg": {
+            "direction": "short",
+            "type": "call",
+            "strike": 50,
+            "size": 1,
+            "initialPrice": 2.02,
+            "initialCF": 202,
+            "value": -200,
+            "profitLoss": 2
+        },
+        "initialCF": -236,
+        "value": 500,
+        "profitLoss": 264
+    }
+
 */
