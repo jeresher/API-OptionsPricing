@@ -4,7 +4,7 @@ const { blackScholesModel, coxRossRubinsteinModel, jarrowRuddModel, leisenReimer
 const { optionPayoff, multiLegPayoff } = require('./services/profit');
 const { longCall, longPut, coveredCall, nakedCall, nakedPut } = require('./services/strategies');
 const { bearPutSpread, bullCallSpread, bullPutSpread, bearCallSpread } = require('./services/spreads');
-const { longStraddle, longStrangle } = require('./services/advanced');
+const { longStraddle, longStrangle, shortStraddle } = require('./services/advanced');
 
 
 const PORT = 3000
@@ -37,6 +37,7 @@ app.get("/spread/bear-call-spread", bearCallSpread);
 // ADVANCED OPTION STRATEGIES
 app.get("/advanced/long-straddle", longStraddle);
 app.get("/advanced/long-strangle", longStrangle);
+app.get("/advanced/short-straddle", shortStraddle);
 
 app.listen(PORT, () => {
     console.log(`Listening on PORT: ${PORT}`)
@@ -432,7 +433,7 @@ app.listen(PORT, () => {
 
 /*
 
-    LONG STRADDLE BODY FORMAT 
+    LONG STRADDLE/STRAGGLE BODY FORMAT 
 
     {
         "longPutStrikePrice": 45,
@@ -471,5 +472,13 @@ app.listen(PORT, () => {
         "value": 800,
         "profitLoss": 227
     }
+
+*/
+
+/* 
+
+    SHORT STRADDLE BODY FORMAT
+
+    
 
 */
