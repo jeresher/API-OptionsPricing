@@ -1,25 +1,10 @@
 const express = require('express');
 const app = express();
-const { 
-    blackScholesModel, 
-    coxRossRubinsteinModel, 
-    jarrowRuddModel,
-    leisenReimerModel 
-} = require('./services/valuation.js');
+const { blackScholesModel, coxRossRubinsteinModel, jarrowRuddModel, leisenReimerModel } = require('./services/valuation.js');
 const { optionPayoff, multiLegPayoff } = require('./services/profit');
-const { 
-    longCall, 
-    longPut,
-    coveredCall,
-    nakedCall,
-    nakedPut
-} = require('./services/strategies');
-const {
-    bearPutSpread,
-    bullCallSpread,
-    bullPutSpread,
-    bearCallSpread
-} = require('./services/spreads');
+const { longCall, longPut, coveredCall, nakedCall, nakedPut } = require('./services/strategies');
+const { bearPutSpread, bullCallSpread, bullPutSpread, bearCallSpread } = require('./services/spreads');
+const { longStraddle } = require('./services/advanced');
 
 
 const PORT = 3000
@@ -49,6 +34,8 @@ app.get("/spread/bull-call-spread", bullCallSpread);
 app.get("/spread/bull-put-spread", bullPutSpread);
 app.get("/spread/bear-call-spread", bearCallSpread);
 
+// ADVANCED OPTION STRATEGIES
+app.get("/advanced/long-straddle", longStraddle);
 
 app.listen(PORT, () => {
     console.log(`Listening on PORT: ${PORT}`)
