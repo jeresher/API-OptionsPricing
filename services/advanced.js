@@ -552,6 +552,100 @@ function ironButterfly(req, res) {
     })
 }
 
+function collar(req, res) {
+
+    function validateRequest(request) {
+        
+        const schema = Joi.object({
+            stockInitialPrice: Joi.number().required(),
+            shareSize: Joi.number().required(),                         // Number of shares being held 
+            longPutStrikePrice: Joi.number().required(),
+            longPutPremiumPrice: Joi.number().required(),
+            shortCallStrikePrice: Joi.number().required(),              // Strike price of the short call
+            shortCallPremiumPrice: Joi.number().required(),             // Premium price of the short call
+            underlyingPrice: Joi.number().required(),                   // Market price of the asset
+            contractSize: Joi.number(),                                 // Number of shares a contract represents (Default: 100)
+            positionSizeEachOptionType: Joi.number()                    // Number of contracts being held per Option Type (Default: 1)
+        })
+
+        return schema.validate(request);
+    }
+
+    const data = validateRequest(req.body);
+
+    if (data.error) {
+        res.status(400).send(data.error.details[0].message);
+        return;
+    }
+
+    const stockI = req.body.stockInitialPrice
+    const shareSize = req.body.shareSize
+    const longPutK = req.body.longPutStrikePrice
+    const longPutI = req.body.longPutPremiumPrice
+    const shortCallK = req.body.shortCallStrikePrice
+    const shortCallI = req.body.shortCallPremiumPrice
+    const U = req.body.underlyingPrice
+    const cSize = req.body.contractSize || 100
+    const pSize = req.body.positionSizeEachOptionType || 1
+
+    const initialStockCF = -(stockI * shareSize);
+    const initialLongPutCF = -(longPutI * cSize * pSize);
+    const initialShortCallCF = shortCallI * cSize * pSize;
+
+    const stockValue = U * shareSize;
+    const longPutValue = () => {
+        if (U > longPutK) return 0;
+        else return (longPutK - U) * cSize * pSize;
+    };
+    const shortCallValue = () => {
+        if (U < shortCallK) return 0;
+        else return -((U - shortCallK) * cSize * pSize);
+    };
+
+    const stockProfitLoss = stockValue + initialStockCF;
+    const longPutProfitLoss = longPutValue() + initialLongPutCF;
+    const shortCallProfitLoss = shortCallValue() + initialShortCallCF;
+
+    const stockLeg = {
+        direction: "long",
+        type: "stock",
+        size: shareSize,
+        initialPrice: stockI,
+        initialCF: initialStockCF,
+        value: stockValue,
+        profitLoss: stockProfitLoss
+    }
+    const longPutLeg = {
+        direction: "long",
+        type: "put",
+        strike: longPutK,
+        size: pSize,
+        initialPrice: longPutI,
+        initialCF: initialLongPutCF,
+        value: longPutValue(),
+        profitLoss: longPutProfitLoss
+    }
+    const shortCallLeg = {
+        direction: "short",
+        type: "call",
+        strike: shortCallK,
+        size: pSize,
+        initialPrice: shortCallI,
+        initialCF: initialShortCallCF,
+        value: shortCallValue(),
+        profitLoss: shortCallProfitLoss
+    }
+
+    res.send({
+        stockLeg,
+        longPutLeg,
+        shortCallLeg,
+        initialCF: initialStockCF + initialLongPutCF + initialShortCallCF,
+        value: stockValue + longPutValue() + shortCallValue(),
+        profitLoss: stockProfitLoss + longPutProfitLoss + shortCallProfitLoss
+    })
+}
+
 
 module.exports = {
     longStraddle,
@@ -559,5 +653,6 @@ module.exports = {
     shortStraddle,
     shortStrangle,
     ironCondor,
-    ironButterfly
+    ironButterfly,
+    collar
 }

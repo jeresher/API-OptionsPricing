@@ -4,7 +4,7 @@ const { blackScholesModel, coxRossRubinsteinModel, jarrowRuddModel, leisenReimer
 const { optionPayoff, multiLegPayoff } = require('./services/profit');
 const { longCall, longPut, coveredCall, nakedCall, nakedPut } = require('./services/strategies');
 const { bearPutSpread, bullCallSpread, bullPutSpread, bearCallSpread } = require('./services/spreads');
-const { longStraddle, longStrangle, shortStraddle, shortStrangle, ironCondor, ironButterfly } = require('./services/advanced');
+const { longStraddle, longStrangle, shortStraddle, shortStrangle, ironCondor, ironButterfly, collar } = require('./services/advanced');
 
 
 const PORT = 3000
@@ -41,6 +41,7 @@ app.get("/advanced/short-straddle", shortStraddle);
 app.get("/advanced/short-strangle", shortStrangle);
 app.get("/advanced/iron-condor", ironCondor);
 app.get("/advanced/iron-butterfly", ironButterfly);
+app.get("/advanced/collar", collar);
 
 app.listen(PORT, () => {
     console.log(`Listening on PORT: ${PORT}`)
@@ -586,6 +587,61 @@ app.listen(PORT, () => {
         "initialCF": 373,
         "value": -500,
         "profitLoss": -127
+    }
+
+*/
+
+/*
+
+    COLLAR BODY FORMAT
+
+    {
+        "stockInitialPrice": 47.72,
+        "shareSize": 100,
+        "longPutStrikePrice": 45,
+        "longPutPremiumPrice": 1.87,
+        "shortCallStrikePrice": 50,
+        "shortCallPremiumPrice": 2.02,
+        "underlyingPrice": 46,
+        "contractSize": 100, 
+        "positionSizeEachOptionType": 1
+    }
+
+    RESPONSE
+
+    {
+        "stockLeg": {
+            "direction": "long",
+            "type": "stock",
+            "size": 100,
+            "initialPrice": 47.72,
+            "initialCF": -4772,
+            "value": 4600,
+            "profitLoss": -172
+        },
+        "longPutLeg": {
+            "direction": "long",
+            "type": "put",
+            "strike": 45,
+            "size": 1,
+            "initialPrice": 1.87,
+            "initialCF": -187,
+            "value": 0,
+            "profitLoss": -187
+        },
+        "shortCallLeg": {
+            "direction": "short",
+            "type": "call",
+            "strike": 50,
+            "size": 1,
+            "initialPrice": 2.02,
+            "initialCF": 202,
+            "value": 0,
+            "profitLoss": 202
+        },
+        "initialCF": -4757,
+        "value": 4600,
+        "profitLoss": -157
     }
 
 */
