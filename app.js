@@ -521,3 +521,71 @@ app.listen(PORT, () => {
     }
 
 */
+
+/*
+
+    IRON BUTTERFLY/CONDOR BODY FORMAT
+
+    {
+        "longPutStrikePrice": 45,
+        "longPutPremiumPrice": 1.21,
+        "shortPutStrikePrice": 50,
+        "shortPutPremiumPrice": 3.17,
+        "shortCallStrikePrice": 50,
+        "shortCallPremiumPrice": 3.19,
+        "longCallStrikePrice": 55,
+        "longCallPremiumPrice": 1.42,
+        "underlyingPrice": 44,
+        "contractSize": 100, 
+        "positionSizeEachOptionType": 1
+    }
+
+    RESPONSE
+
+    {
+        "longPutLeg": {
+            "direction": "long",
+            "type": "put",
+            "strike": 45,
+            "size": 1,
+            "initialPrice": 1.21,
+            "initialCF": -121,
+            "value": 100,
+            "profitLoss": -21
+        },
+        "shortPutLeg": {
+            "direction": "short",
+            "type": "put",
+            "strike": 50,
+            "size": 1,
+            "initialPrice": 3.17,
+            "initialCF": 317,
+            "value": -600,
+            "profitLoss": -283
+        },
+        "shortCallLeg": {
+            "direction": "short",
+            "type": "call",
+            "strike": 50,
+            "size": 1,
+            "initialPrice": 3.19,
+            "initialCF": 319,
+            "value": 0,
+            "profitLoss": 319
+        },
+        "longCallLeg": {
+            "direction": "long",
+            "type": "call",
+            "strike": 55,
+            "size": 1,
+            "initialPrice": 1.42,
+            "initialCF": -142,
+            "value": 0,
+            "profitLoss": -142
+        },
+        "initialCF": 373,
+        "value": -500,
+        "profitLoss": -127
+    }
+
+*/
