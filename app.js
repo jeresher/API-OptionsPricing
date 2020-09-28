@@ -434,7 +434,7 @@ app.listen(PORT, () => {
 
 /*
 
-    LONG STRADDLE/STRAGGLE BODY FORMAT 
+    LONG STRADDLE/STRANGLE BODY FORMAT 
 
     {
         "longPutStrikePrice": 45,
@@ -478,7 +478,7 @@ app.listen(PORT, () => {
 
 /* 
 
-    SHORT STRADDLE BODY FORMAT
+    SHORT STRADDLE/STRANGLE BODY FORMAT
 
     {
         "shortPutStrikePrice": 45,
