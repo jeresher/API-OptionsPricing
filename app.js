@@ -36,7 +36,7 @@ app.get("/strategy/long-put", longPut);
 app.get("/strategy/covered-call", coveredCall);
 app.get("/strategy/naked-call", nakedCall);
 app.get("/strategy/naked-put", nakedPut);
-
+app.get("/strategy/protected-call", protectedCall);
 
 app.listen(PORT, () => {
     console.log(`Listening on PORT: ${PORT}`)
@@ -263,6 +263,38 @@ app.listen(PORT, () => {
             ]
         ],
         "optionPrice": 3.4417669411954943
+    }
+    
+*/
+
+/*
+    
+    COVERED CALL BODY FORMAT
+    
+    {
+        "stockPurchasePrice": 50,
+        "stockExpirationPrice": 55,
+        "optionPremium": 4,
+        "strikePrice": 55,
+        "contractSize": 100, 
+        "positionSize": 1
+    }
+
+    RESPONSE
+
+    {
+        "information": {
+            "stockPurchasePrice": 50,
+            "stockExpirationPrice": 55,
+            "optionPremium": 4,
+            "strikePrice": 55,
+            "contractSize": 100,
+            "positionSize": 1
+        },
+        "breakEvenPoint": 46,
+        "maxProfitPoint": 55,
+        "profitLossPerShare": 9,
+        "profitLossTotal": 900
     }
     
 */
