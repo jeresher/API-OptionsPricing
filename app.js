@@ -17,7 +17,8 @@ const {
 const {
     bearPutSpread,
     bullCallSpread,
-    bullPutSpread
+    bullPutSpread,
+    bearCallSpread
 } = require('./services/spreads');
 
 
@@ -46,6 +47,7 @@ app.get("/strategy/naked-put", nakedPut);
 app.get("/spread/bear-put-spread", bearPutSpread);
 app.get("/spread/bull-call-spread", bullCallSpread);
 app.get("/spread/bull-put-spread", bullPutSpread);
+app.get("/spread/bear-call-spread", bearCallSpread);
 
 
 app.listen(PORT, () => {
