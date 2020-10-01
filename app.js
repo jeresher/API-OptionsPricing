@@ -1,10 +1,10 @@
 const express = require('express');
 const app = express();
-const { blackScholesModel, coxRossRubinsteinModel, jarrowRuddModel, leisenReimerModel } = require('./services/valuation.js');
-const { optionPayoff, multiLegPayoff } = require('./services/profit');
-const { longCall, longPut, coveredCall, nakedCall, nakedPut } = require('./services/strategies');
-const { bearPutSpread, bullCallSpread, bullPutSpread, bearCallSpread } = require('./services/spreads');
-const { longStraddle, longStrangle, shortStraddle, shortStrangle, ironCondor, ironButterfly, collar } = require('./services/advanced');
+const { blackScholesModel, coxRossRubinsteinModel, jarrowRuddModel, leisenReimerModel } = require('./calculations/valuation.js');
+const { optionPayoff, multiLegPayoff } = require('./calculations/profit');
+const { longCall, longPut, coveredCall, nakedCall, nakedPut } = require('./calculations/strategies');
+const { bearPutSpread, bullCallSpread, bullPutSpread, bearCallSpread } = require('./calculations/spreads');
+const { longStraddle, longStrangle, shortStraddle, shortStrangle, ironCondor, ironButterfly, collar } = require('./calculations/advanced');
 
 
 const PORT = 3000
